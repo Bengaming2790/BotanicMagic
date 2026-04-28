@@ -18,9 +18,7 @@
 		"client": [
 			"ca.techgarage.client.BotanicMagicClient"
 		],
-		"modmenu": [
-			"ca.techgarage.client.BotanicMagicModMenuIntegration"
-		]
+		"fabric-datagen": ["ca.techgarage.datagen.BotanicMagicDataGenerator"]
 	},
 	"mixins": [
 	],

@@ -3,11 +3,8 @@ package ca.techgarage;
 
 import ca.techgarage.blocks.RefinementTableBlock;
 import ca.techgarage.blocks.RefinementTableBlockEntity;
-import ca.techgarage.blocks.flowers.Glaciolus;
-import ca.techgarage.blocks.flowers.Pyrotunia;
+import ca.techgarage.blocks.flowers.*;
 import ca.techgarage.blocks.ResearchTableBlock;
-import ca.techgarage.blocks.flowers.Sparkspur;
-import ca.techgarage.blocks.flowers.Terrow;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -44,6 +41,12 @@ public class ModBlocks {
     public static final Block TERROW = register(
             "terrow",
             Terrow::new,
+            BlockBehaviour.Properties.of().noCollision().sound(SoundType.GRASS),
+            true
+    );
+    public static final Block ABYSSUM = register(
+            "abyssum",
+            Abyssum::new,
             BlockBehaviour.Properties.of().noCollision().sound(SoundType.GRASS),
             true
     );

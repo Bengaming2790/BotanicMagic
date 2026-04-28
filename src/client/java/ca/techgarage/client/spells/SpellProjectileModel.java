@@ -22,7 +22,6 @@ public class SpellProjectileModel extends EntityModel<SpellProjectileRenderState
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition rootPart = mesh.getRoot();
-        // Small cube, centered
         rootPart.addOrReplaceChild("cube",
                 CubeListBuilder.create().addBox(-3, -3, -3, 6, 6, 6),
                 PartPose.offset(0, 0, 0)
@@ -32,6 +31,5 @@ public class SpellProjectileModel extends EntityModel<SpellProjectileRenderState
 
     @Override
     public void setupAnim(SpellProjectileRenderState state) {
-        // no animation needed
     }
 }

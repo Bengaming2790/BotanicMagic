@@ -35,6 +35,7 @@ public class BotanicMagic implements ModInitializer {
 		ModMenus.register();
 		ModRecipes.register();
 		ModEntities.register();
+		if (!BotanicConfig.isModFest) ModWorldgen.register();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, CUSTOM_CREATIVE_TAB_KEY, CUSTOM_CREATIVE_TAB);
 	}
 
@@ -52,7 +53,8 @@ public class BotanicMagic implements ModInitializer {
 				output.accept(ModBlocks.SPARKSPUR);
 				output.accept(ModItems.SPARKSPUR_SEEDS);
 				output.accept(ModBlocks.GLACIOLUS);
-
+				output.accept(ModBlocks.TERROW);
+				output.accept(ModBlocks.ABYSSUM);
 			})
 			.build();
 

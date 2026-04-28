@@ -7,22 +7,18 @@ import ca.techgarage.spells.MagicShape;
 import ca.techgarage.spells.SpellElement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.List;
 
-public class Pyrotunia extends GrowableFlowerBlock implements IExtractableFlower {
+public class Abyssum extends GrowableFlowerBlock implements IExtractableFlower {
     private boolean fullygrown = false;
-    public Pyrotunia(BlockBehaviour.Properties properties) {
-        super(SuspiciousStewEffects.EMPTY, properties, 3, 0.25f);
+    public Abyssum(BlockBehaviour.Properties properties) {
+        super(SuspiciousStewEffects.EMPTY, properties, 3, 0.10f);
     }
 
     @Override
@@ -30,12 +26,11 @@ public class Pyrotunia extends GrowableFlowerBlock implements IExtractableFlower
         fullygrown = true;
     }
     private static final FlowerExtractionData EXTRACTION_DATA = new FlowerExtractionData(
-            0.30f,  // 30% - FIRE element
-            0.25f,  // 25% - shape
-            0.20f,  // 20% - husk
-            // Remaining 25% - FAILED
-            List.of(new FlowerExtractionData.WeightedEntry<>(SpellElement.FIRE, 1.0f),
-                    new FlowerExtractionData.WeightedEntry<>(SpellElement.DARK, 0.001f)),
+            0.08f,  // 8% - Dark element
+            0.20f,  // 20% - shape
+            0.25f,  // 35% - husk
+            // Remaining 47% - FAILED
+            List.of(new FlowerExtractionData.WeightedEntry<>(SpellElement.DARK, 1.0f)),
             List.of(
                     new FlowerExtractionData.WeightedEntry<>(MagicShape.PROJECTILE, 2.0f),
                     new FlowerExtractionData.WeightedEntry<>(MagicShape.CONE,       1.5f),

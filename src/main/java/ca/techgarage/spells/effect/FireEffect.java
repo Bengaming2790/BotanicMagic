@@ -10,9 +10,14 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class FireEffect implements Spell {
 
@@ -30,7 +35,13 @@ public class FireEffect implements Spell {
             applyColumn(level, caster);
             return;
         }
-
+        if (shape == MagicShape.CONE) {
+            applyCone(level, caster);
+            return;
+        }
+        if (shape == MagicShape.AOE) {
+            applyAoeDamage(caster, 5f);
+        }
         if (shape == MagicShape.PROJECTILE) {
             spawnProjectile(level, caster);
         } else if (target == caster || shape == MagicShape.BUFF_SELF) {
@@ -40,8 +51,12 @@ public class FireEffect implements Spell {
             );
         } else {
             if (level instanceof ServerLevel serverLevel) {
-                target.hurt(level.damageSources().onFire(), damage);
-                target.igniteForSeconds(5);
+                if (target != null) {
+                    target.hurt(
+                            level.damageSources().playerAttack((Player) caster),
+                            damage
+                    );
+                }
             }
         }
     }
@@ -63,7 +78,7 @@ public class FireEffect implements Spell {
 
         Vec3 look = caster.getLookAngle().normalize();
 
-        double maxDistance = 8.0;
+        double maxDistance = 10.0;
         double step = 0.25;
 
         double baseHeight = 5.5;
@@ -124,6 +139,106 @@ public class FireEffect implements Spell {
 
                 entity.hurt(level.damageSources().onFire(), damage);
                 entity.igniteForSeconds(2);
+            }
+        }
+    }
+
+    private void applyCone(Level level, LivingEntity caster) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        Vec3 origin = caster.getEyePosition();
+        Vec3 look = caster.getLookAngle().normalize();
+
+        double maxDistance = 8.0;
+        double maxRadius = 5.0;
+        double step = 0.5;
+
+        for (double d = 0; d <= maxDistance; d += step) {
+
+            Vec3 center = origin.add(look.scale(d));
+
+            double radius = (d / maxDistance) * maxRadius;
+
+            for (int i = 0; i < 8; i++) {
+                double angle = Math.random() * Math.PI * 2;
+
+                double rx = Math.cos(angle) * radius;
+                double rz = Math.sin(angle) * radius;
+
+                serverLevel.sendParticles(
+                        ParticleTypes.FLAME,
+                        center.x + rx,
+                        center.y + (Math.random() - 0.5) * radius,
+                        center.z + rz,
+                        15,
+                        0, 0, 0,
+                        0
+                );
+            }
+
+            var box = new net.minecraft.world.phys.AABB(
+                    center.x - radius,
+                    center.y - radius,
+                    center.z - radius,
+                    center.x + radius,
+                    center.y + radius,
+                    center.z + radius
+            );
+
+            for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
+                if (target == caster) continue;
+
+                target.hurt(level.damageSources().onFire(), damage);
+                target.igniteForSeconds(3);
+            }
+        }
+    }
+    private void applyAoeDamage(LivingEntity attacker, float radius) {
+        Level world = attacker.level();
+
+        AABB box = new AABB(
+                attacker.getX() - radius, attacker.getY() - radius, attacker.getZ() - radius,
+                attacker.getX() + radius, attacker.getY() + radius, attacker.getZ() + radius
+        );
+
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                box,
+                e -> e != attacker && e.isAlive()
+        );
+
+        for (LivingEntity entity : entities) {
+            if (entity.distanceToSqr(attacker) <= radius * radius) {
+
+                entity.hurtServer(
+                        (ServerLevel) world,
+                        world.damageSources().playerAttack((Player) attacker),
+                        damage
+                );
+
+                entity.igniteForSeconds(3);
+            }
+        }
+
+        if (world instanceof ServerLevel serverLevel) {
+            int points = 480;
+
+            for (int i = 0; i < points; i++) {
+
+                double theta = serverLevel.getRandom().nextDouble() * Math.PI * 2.0;
+                double phi = Math.acos(2.0 * serverLevel.getRandom().nextDouble() - 1.0);
+
+                double x = attacker.getX() + radius * Math.sin(phi) * Math.cos(theta);
+                double y = attacker.getY() + 1.0 + radius * Math.cos(phi);
+                double z = attacker.getZ() + radius * Math.sin(phi) * Math.sin(theta);
+
+                serverLevel.sendParticles(
+                        ParticleTypes.FLAME,
+                        x, y, z,
+                        5,
+                        0, 0, 0,
+                        0
+                );
             }
         }
     }

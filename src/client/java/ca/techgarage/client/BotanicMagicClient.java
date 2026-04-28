@@ -4,7 +4,9 @@ import ca.techgarage.ModMenus;
 import ca.techgarage.bscm.Bscm;
 import ca.techgarage.client.screen.RefinementTableScreen;
 import ca.techgarage.client.screen.ResearchTableScreen;
+import ca.techgarage.client.spells.BlockProjectileRenderer;
 import ca.techgarage.client.spells.SpellProjectileRenderer;
+import ca.techgarage.entity.BlockProjectileEntity;
 import ca.techgarage.entity.ModEntities;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ClientModInitializer;
@@ -18,6 +20,7 @@ public class BotanicMagicClient implements ClientModInitializer {
 		MenuScreens.register(ModMenus.RESEARCH_TABLE, ResearchTableScreen::new);
 		MenuScreens.register(ModMenus.REFINEMENT_TABLE, RefinementTableScreen::new);
 		EntityRenderers.register(ModEntities.SPELL_PROJECTILE, SpellProjectileRenderer::new);
+		EntityRenderers.register(ModEntities.BLOCK_PROJECTILE, BlockProjectileRenderer::new);
 
 
 	}

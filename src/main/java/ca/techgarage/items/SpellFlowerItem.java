@@ -6,10 +6,7 @@ import ca.techgarage.spells.MagicEssenceData;
 import ca.techgarage.spells.MagicShape;
 import ca.techgarage.spells.Spell;
 import ca.techgarage.spells.SpellElement;
-import ca.techgarage.spells.effect.EarthEffect;
-import ca.techgarage.spells.effect.FireEffect;
-import ca.techgarage.spells.effect.IceEffect;
-import ca.techgarage.spells.effect.SparkEffect;
+import ca.techgarage.spells.effect.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -86,15 +83,16 @@ public class SpellFlowerItem extends Item {
 
     private void castSpell(Level level, Player player, SpellElement element, MagicShape shape) {
         Spell spell = switch (element) {
-            case FIRE -> new FireEffect(15.0f, shape);
-            case ICE -> new IceEffect(3.0f, shape);
-            case EARTH -> new EarthEffect(9.0f, shape);
-            case SPARK -> new SparkEffect(8.5f, shape);
+            case FIRE -> new FireEffect(11.5f, shape);
+            case ICE -> new IceEffect(11.0f, shape);
+            case EARTH -> new EarthEffect(10.5f, shape);
+            case SPARK -> new SparkEffect(12.0f, shape);
+            case DARK -> new DarkEffect(12.5f, shape);
         };
 
 
         switch (shape) {
-            case PROJECTILE, COLUMN -> spell.apply(level, player, null);
+            case PROJECTILE, COLUMN, CONE, AOE -> spell.apply(level, player, null);
             case BUFF_SELF -> spell.apply(level, player, player);
         }
     }
@@ -116,7 +114,7 @@ public class SpellFlowerItem extends Item {
                 tooltip.accept(Component.literal("Element: ")
                         .withStyle(ChatFormatting.GRAY)
                         .append(Component.literal(element.name())
-                                .withStyle(elementColor(element))))
+                                .withStyle(elementColor(element)).withStyle(ChatFormatting.BOLD)))
         );
 
         data.shape().ifPresent(shape ->
@@ -137,6 +135,7 @@ public class SpellFlowerItem extends Item {
             case ICE -> ChatFormatting.AQUA;
             case EARTH -> ChatFormatting.GREEN;
             case SPARK -> ChatFormatting.YELLOW;
+            case DARK -> ChatFormatting.BLACK;
         };
     }
     public record SpellXpData(int cost) {}

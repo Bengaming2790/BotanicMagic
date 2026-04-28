@@ -18,7 +18,7 @@ public abstract class GrowableFlowerBlock extends FlowerBlock {
     protected final int maxAge;
     protected final float growthChance;
 
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 7);
+    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 3);
     protected GrowableFlowerBlock(
             SuspiciousStewEffects effects,
             BlockBehaviour.Properties properties,

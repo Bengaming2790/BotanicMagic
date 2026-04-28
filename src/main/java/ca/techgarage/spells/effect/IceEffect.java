@@ -34,7 +34,10 @@ public class IceEffect implements Spell {
             applyColumn(level, caster);
             return;
         }
-
+        if (shape == MagicShape.CONE) {
+            applyCone(level, caster);
+            return;
+        }
         if (shape == MagicShape.PROJECTILE) {
             spawnProjectile(level, caster);
         } else if (target == caster || shape == MagicShape.BUFF_SELF) {
@@ -66,7 +69,7 @@ public class IceEffect implements Spell {
 
         Vec3 look = caster.getLookAngle().normalize();
 
-        double maxDistance = 8.0;
+        double maxDistance = 10.0;
         double step = 0.25;
 
         double baseHeight = 5.5;
@@ -125,9 +128,60 @@ public class IceEffect implements Spell {
             for (LivingEntity entity : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (entity == caster) continue;
 
-                entity.hurt(level.damageSources().onFire(), damage);
-                entity.igniteForSeconds(2);
+                entity.hurt(level.damageSources().freeze(), damage);
+                entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
             }
         }
     }
+
+    private void applyCone(Level level, LivingEntity caster) {
+        if (!(level instanceof ServerLevel serverLevel)) return;
+
+        Vec3 origin = caster.getEyePosition();
+        Vec3 look = caster.getLookAngle().normalize();
+
+        double maxDistance = 8.0;
+        double maxRadius = 5.0;
+        double step = 0.5;
+
+        for (double d = 0; d <= maxDistance; d += step) {
+
+            Vec3 center = origin.add(look.scale(d));
+
+            double radius = (d / maxDistance) * maxRadius;
+
+            for (int i = 0; i < 8; i++) {
+                double angle = Math.random() * Math.PI * 2;
+
+                double rx = Math.cos(angle) * radius;
+                double rz = Math.sin(angle) * radius;
+
+                serverLevel.sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PACKED_ICE.defaultBlockState()),
+                        center.x + rx,
+                        center.y + (Math.random() - 0.5) * radius,
+                        center.z + rz,
+                        15,
+                        0, 0, 0,
+                        0
+                );
+            }
+
+            var box = new net.minecraft.world.phys.AABB(
+                    center.x - radius,
+                    center.y - radius,
+                    center.z - radius,
+                    center.x + radius,
+                    center.y + radius,
+                    center.z + radius
+            );
+
+            for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
+                if (target == caster) continue;
+                target.hurt(level.damageSources().freeze(), damage);
+                target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
+            }
+        }
+    }
+
 }

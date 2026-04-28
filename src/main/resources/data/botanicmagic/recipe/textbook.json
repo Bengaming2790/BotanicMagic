@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "#botanicmagic:flowers"
+  ],
+  "result": {
+    "id": "botanicmagic:textbook"
+  }
+}

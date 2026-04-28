@@ -1,24 +1,29 @@
 package ca.techgarage.spells.effect;
 
-import ca.techgarage.spells.MagicShape;
-import ca.techgarage.spells.Spell;
+import ca.techgarage.entity.BlockProjectileEntity;
 import ca.techgarage.entity.ModEntities;
 import ca.techgarage.entity.SpellProjectileEntity;
-import ca.techgarage.spells.SpellElement;
+import ca.techgarage.spells.MagicShape;
+import ca.techgarage.spells.Spell;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class SparkEffect implements Spell {
-
+public class DarkEffect implements Spell {
     private final float damage;
     private final MagicShape shape;
-    public SparkEffect(float damage, MagicShape shape) {
+    public DarkEffect(float damage, MagicShape shape) {
         this.damage = damage;
         this.shape = shape;
     }
@@ -28,35 +33,52 @@ public class SparkEffect implements Spell {
 
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
-        } else if (shape == MagicShape.CONE) {
+            return;
+        }
+
+        if (shape == MagicShape.CONE) {
             applyCone(level, caster);
-        } else if (shape == MagicShape.PROJECTILE) {
-            spawnProjectile(level, caster);
-        } else if (target == caster) {
-            caster.addEffect(
-                    new MobEffectInstance(MobEffects.SPEED, 20 * 25, 1, true, true, true),
-                    target
-            );
-        } else {
-            if (level instanceof ServerLevel serverLevel) {
-                target.hurt(level.damageSources().lightningBolt(), damage);
-                target.igniteForSeconds(5);
+            return;
+        }
+
+        if (shape == MagicShape.PROJECTILE) {
+            if (target == null) {
+                spawnProjectile(level, caster);
+            } else {
+                target.hurt(level.damageSources().sonicBoom(caster), damage);
             }
+            return;
+        }
+
+        if (target == caster || shape == MagicShape.BUFF_SELF) {
+            caster.addEffect(new MobEffectInstance(MobEffects.HEALTH_BOOST, 20 * 25, 3, true, false, true));
+            return;
+        }
+
+        if (target != null) {
+            target.hurt(level.damageSources().sonicBoom(caster), damage);
         }
     }
 
     private void spawnProjectile(Level level, LivingEntity caster) {
         SpellProjectileEntity projectile =
-                new SpellProjectileEntity(ModEntities.SPELL_PROJECTILE, level, 0xFF5500, ParticleTypes.ELECTRIC_SPARK);
+                new SpellProjectileEntity(
+                        ModEntities.SPELL_PROJECTILE,
+                        level,
+                        0xFF5500,
+                        new DustParticleOptions(0x000000, 1)
+                );
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
         projectile.setEffect(this, caster);
 
+        projectile.setSonicBoomOnHit(true);
         Vec3 direction = caster.getLookAngle().scale(0.5);
         projectile.setDeltaMovement(direction);
 
         level.addFreshEntity(projectile);
     }
+
     private void applyColumn(Level level, LivingEntity caster) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
@@ -89,27 +111,14 @@ public class SparkEffect implements Spell {
             double height = baseHeight + Math.random() * 0.6;
 
             for (double y = 0; y <= height; y += 0.4) {
-
-                if (Math.random() < 0.15) continue;
-
                 serverLevel.sendParticles(
-                        ParticleTypes.ELECTRIC_SPARK,
+                        new DustParticleOptions(0x000000, 1),
                         x + wobbleX,
                         baseY + y,
                         z + wobbleZ,
                         1,
                         0.02, 0.02, 0.02,
                         0.0
-                );
-            }
-
-            if (Math.random() < 0.08) {
-                serverLevel.sendParticles(
-                        ParticleTypes.DUST_PLUME,
-                        x, baseY + 0.5, z,
-                        3,
-                        0.2, 0.4, 0.2,
-                        0.01
                 );
             }
 
@@ -120,13 +129,13 @@ public class SparkEffect implements Spell {
 
             for (LivingEntity entity : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (entity == caster) continue;
-
-                entity.hurt(level.damageSources().lightningBolt(), damage);
-                entity.igniteForSeconds(1);
+                if (level.getRandom().nextInt(200) == 0) {
+                    entity.hurt(level.damageSources().sonicBoom(caster), 30);
+                }
+                entity.hurt(level.damageSources().sonicBoom(caster), damage);
             }
         }
     }
-
     private void applyCone(Level level, LivingEntity caster) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
@@ -150,7 +159,7 @@ public class SparkEffect implements Spell {
                 double rz = Math.sin(angle) * radius;
 
                 serverLevel.sendParticles(
-                        ParticleTypes.ELECTRIC_SPARK,
+                        new DustParticleOptions(0x000000, 1),
                         center.x + rx,
                         center.y + (Math.random() - 0.5) * radius,
                         center.z + rz,
@@ -171,9 +180,11 @@ public class SparkEffect implements Spell {
 
             for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (target == caster) continue;
-
-                target.hurt(level.damageSources().lightningBolt(), damage);
-                target.igniteForSeconds(1);
+                target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
+                if (level.getRandom().nextInt(200) == 0) {
+                    target.hurt(level.damageSources().sonicBoom(caster), 30);
+                }
+                target.hurt(level.damageSources().sonicBoom(caster), damage);
             }
         }
     }

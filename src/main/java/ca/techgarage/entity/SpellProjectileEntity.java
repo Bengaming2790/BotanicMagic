@@ -28,7 +28,7 @@ public class SpellProjectileEntity extends Entity {
     private LivingEntity caster;
     private int lifetimeTicks = 0;
     private static final int MAX_LIFETIME = 100;
-
+    private boolean sonicBoomOnHit = false;
     public ParticleOptions particle;
 
     public SpellProjectileEntity(EntityType<?> type, Level level) {
@@ -58,7 +58,9 @@ public class SpellProjectileEntity extends Entity {
     public int getColor() {
         return this.entityData.get(COLOR);
     }
-
+    public void setSonicBoomOnHit(boolean value) {
+        this.sonicBoomOnHit = value;
+    }
     @Override
     public void tick() {
         super.tick();
@@ -117,6 +119,11 @@ public class SpellProjectileEntity extends Entity {
                 .min(Comparator.comparingDouble(e -> e.distanceToSqr(this)))
                 .ifPresent(target -> {
                     effect.apply(this.level(), caster, target);
+
+                    if (sonicBoomOnHit && this.level().getRandom().nextInt(200) == 0) {
+                        target.hurt(this.level().damageSources().sonicBoom(caster), 30.0F);
+                    }
+
                     this.discard();
                 });
     }

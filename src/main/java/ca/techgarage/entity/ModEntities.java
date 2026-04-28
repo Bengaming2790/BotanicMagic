@@ -14,9 +14,12 @@ public class ModEntities {
             BuiltInRegistries.ENTITY_TYPE.key(),
             Identifier.fromNamespaceAndPath(BotanicMagic.MOD_ID, "spell_projectile")
     );
-
+    public static final ResourceKey<EntityType<?>> BLOCK_PROJECTILE_KEY = ResourceKey.create(
+            BuiltInRegistries.ENTITY_TYPE.key(),
+            Identifier.fromNamespaceAndPath(BotanicMagic.MOD_ID, "block_projectile")
+    );
     public static EntityType<SpellProjectileEntity> SPELL_PROJECTILE;
-
+    public static EntityType<BlockProjectileEntity> BLOCK_PROJECTILE;
     public static void register() {
         SPELL_PROJECTILE = Registry.register(
                 BuiltInRegistries.ENTITY_TYPE,
@@ -26,6 +29,15 @@ public class ModEntities {
                         .clientTrackingRange(4)
                         .updateInterval(10)
                         .build(SPELL_PROJECTILE_KEY)
+        );
+        BLOCK_PROJECTILE = Registry.register(
+                BuiltInRegistries.ENTITY_TYPE,
+                BLOCK_PROJECTILE_KEY,
+                EntityType.Builder.<BlockProjectileEntity>of(BlockProjectileEntity::new, MobCategory.MISC)
+                        .sized(0.5f, 0.5f)
+                        .clientTrackingRange(4)
+                        .updateInterval(10)
+                        .build(BLOCK_PROJECTILE_KEY)
         );
     }
 }

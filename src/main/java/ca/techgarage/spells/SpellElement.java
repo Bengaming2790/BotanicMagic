@@ -4,5 +4,6 @@ public enum SpellElement {
     FIRE,
     ICE,
     SPARK,
-    EARTH
+    EARTH,
+    DARK
 }

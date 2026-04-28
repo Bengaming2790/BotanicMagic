@@ -1,8 +1,9 @@
 {
 	"required": true,
-	"package": "com.example.client.mixin",
+	"package": "ca.techgarage.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"ItemFeatureRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
