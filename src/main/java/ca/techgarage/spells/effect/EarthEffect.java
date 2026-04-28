@@ -167,9 +167,9 @@ public class EarthEffect implements Spell {
 
             for (LivingEntity entity : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (entity == caster) continue;
-
-                entity.hurt(level.damageSources().onFire(), damage);
-                entity.igniteForSeconds(2);
+                if (caster instanceof Player player) {
+                    entity.hurt(level.damageSources().playerAttack(player), damage);
+                }
             }
         }
     }
@@ -219,8 +219,58 @@ public class EarthEffect implements Spell {
             for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (target == caster) continue;
 
-                target.hurt(level.damageSources().onFire(), damage);
-                target.igniteForSeconds(3);
+                if (caster instanceof Player player) {
+                    entity.hurt(level.damageSources().playerAttack(player), damage);
+                }
+            }
+        }
+    }
+
+     private void applyAoeDamage(LivingEntity attacker, float radius) {
+        Level world = attacker.level();
+
+        AABB box = new AABB(
+                attacker.getX() - radius, attacker.getY() - radius, attacker.getZ() - radius,
+                attacker.getX() + radius, attacker.getY() + radius, attacker.getZ() + radius
+        );
+
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                box,
+                e -> e != attacker && e.isAlive()
+        );
+
+        for (LivingEntity entity : entities) {
+            if (entity.distanceToSqr(attacker) <= radius * radius) {
+
+                entity.hurtServer(
+                        (ServerLevel) world,
+                        world.damageSources().playerAttack((Player) attacker),
+                        damage
+                );
+
+            }
+        }
+
+        if (world instanceof ServerLevel serverLevel) {
+            int points = 480;
+
+            for (int i = 0; i < points; i++) {
+
+                double theta = serverLevel.getRandom().nextDouble() * Math.PI * 2.0;
+                double phi = Math.acos(2.0 * serverLevel.getRandom().nextDouble() - 1.0);
+
+                double x = attacker.getX() + radius * Math.sin(phi) * Math.cos(theta);
+                double y = attacker.getY() + 1.0 + radius * Math.cos(phi);
+                double z = attacker.getZ() + radius * Math.sin(phi) * Math.sin(theta);
+
+                serverLevel.sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MUD.defaultBlockState()),
+                        x, y, z,
+                        5,
+                        0, 0, 0,
+                        0
+                );
             }
         }
     }
