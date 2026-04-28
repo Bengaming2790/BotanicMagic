@@ -38,6 +38,10 @@ public class IceEffect implements Spell {
             applyCone(level, caster);
             return;
         }
+        if (shape == MagicShape.AOE) {
+            applyAoeDamage(caster, 5f);
+            return;
+        }
         if (shape == MagicShape.PROJECTILE) {
             spawnProjectile(level, caster);
         } else if (target == caster || shape == MagicShape.BUFF_SELF) {
@@ -47,7 +51,8 @@ public class IceEffect implements Spell {
         } else {
             if (level instanceof ServerLevel serverLevel) {
                 target.hurt(level.damageSources().freeze(), damage);
-
+                target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
+                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 10, 1));
             }
         }
     }
@@ -130,6 +135,7 @@ public class IceEffect implements Spell {
 
                 entity.hurt(level.damageSources().freeze(), damage);
                 entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
+                entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 10, 1));
             }
         }
     }
@@ -184,4 +190,54 @@ public class IceEffect implements Spell {
         }
     }
 
+        private void applyAoeDamage(LivingEntity attacker, float radius) {
+        Level world = attacker.level();
+
+        AABB box = new AABB(
+                attacker.getX() - radius, attacker.getY() - radius, attacker.getZ() - radius,
+                attacker.getX() + radius, attacker.getY() + radius, attacker.getZ() + radius
+        );
+
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                box,
+                e -> e != attacker && e.isAlive()
+        );
+
+        for (LivingEntity entity : entities) {
+            if (entity.distanceToSqr(attacker) <= radius * radius) {
+
+                entity.hurtServer(
+                        (ServerLevel) world,
+                        world.damageSources().playerAttack((Player) attacker),
+                        damage
+                );
+
+                entity.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
+                entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 10, 1));
+            }
+        }
+
+        if (world instanceof ServerLevel serverLevel) {
+            int points = 480;
+
+            for (int i = 0; i < points; i++) {
+
+                double theta = serverLevel.getRandom().nextDouble() * Math.PI * 2.0;
+                double phi = Math.acos(2.0 * serverLevel.getRandom().nextDouble() - 1.0);
+
+                double x = attacker.getX() + radius * Math.sin(phi) * Math.cos(theta);
+                double y = attacker.getY() + 1.0 + radius * Math.cos(phi);
+                double z = attacker.getZ() + radius * Math.sin(phi) * Math.sin(theta);
+
+                serverLevel.sendParticles(
+                        new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PACKED_ICE.defaultBlockState()),
+                        x, y, z,
+                        5,
+                        0, 0, 0,
+                        0
+                );
+            }
+        }
+    }
 }
