@@ -34,6 +34,10 @@ public class EarthEffect implements Spell {
             applyColumn(level, caster);
             return;
         }
+        if (shape == MagicShape.AOE) {
+            applyAoeDamage(caster, 5f);
+            return;
+        }
         if (shape == MagicShape.CONE) {
             applyCone(level, caster);
         }
@@ -47,7 +51,6 @@ public class EarthEffect implements Spell {
         } else {
             if (level instanceof ServerLevel serverLevel) {
                 target.hurt(level.damageSources().onFire(), damage);
-                target.igniteForSeconds(5);
             }
         }
     }
