@@ -6,13 +6,20 @@ import ca.techgarage.entity.ModEntities;
 import ca.techgarage.entity.SpellProjectileEntity;
 import ca.techgarage.spells.SpellElement;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class SparkEffect implements Spell {
 
@@ -25,11 +32,14 @@ public class SparkEffect implements Spell {
 
     @Override
     public void apply(Level level, LivingEntity caster, LivingEntity target) {
+        caster.playSound(SoundEvents.LIGHTNING_BOLT_IMPACT, 1.0f, 2f);
 
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
         } else if (shape == MagicShape.CONE) {
             applyCone(level, caster);
+        } else if (shape == MagicShape.AOE) {
+            applyAoeDamage(caster, 5f);
         } else if (shape == MagicShape.PROJECTILE) {
             spawnProjectile(level, caster);
         } else if (target == caster) {
@@ -174,6 +184,56 @@ public class SparkEffect implements Spell {
 
                 target.hurt(level.damageSources().lightningBolt(), damage);
                 target.igniteForSeconds(1);
+            }
+        }
+    }
+
+    private void applyAoeDamage(LivingEntity attacker, float radius) {
+        Level world = attacker.level();
+
+        AABB box = new AABB(
+                attacker.getX() - radius, attacker.getY() - radius, attacker.getZ() - radius,
+                attacker.getX() + radius, attacker.getY() + radius, attacker.getZ() + radius
+        );
+
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                box,
+                e -> e != attacker && e.isAlive()
+        );
+
+        for (LivingEntity entity : entities) {
+            if (entity.distanceToSqr(attacker) <= radius * radius) {
+
+                entity.hurtServer(
+                        (ServerLevel) world,
+                        world.damageSources().playerAttack((Player) attacker),
+                        damage
+                );
+                entity.igniteForSeconds(1);
+
+            }
+        }
+
+        if (world instanceof ServerLevel serverLevel) {
+            int points = 480;
+
+            for (int i = 0; i < points; i++) {
+
+                double theta = serverLevel.getRandom().nextDouble() * Math.PI * 2.0;
+                double phi = Math.acos(2.0 * serverLevel.getRandom().nextDouble() - 1.0);
+
+                double x = attacker.getX() + radius * Math.sin(phi) * Math.cos(theta);
+                double y = attacker.getY() + 1.0 + radius * Math.cos(phi);
+                double z = attacker.getZ() + radius * Math.sin(phi) * Math.sin(theta);
+
+                serverLevel.sendParticles(
+                        ParticleTypes.ELECTRIC_SPARK,
+                        x, y, z,
+                        5,
+                        0, 0, 0,
+                        0
+                );
             }
         }
     }

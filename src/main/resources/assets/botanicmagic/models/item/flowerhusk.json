@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "botanicmagic:item/flower_husk"
+  },
+  "display": {
+    "gui": {
+      "scale": [1, 1, 1]
+    },
+    "ground": {
+      "scale": [1, 1, 1]
+    },
+    "fixed": {
+      "scale": [1, 1, 1]
+    },
+    "thirdperson_righthand": {
+      "scale": [1, 1, 1],
+      "translation": [0, 4, 0]
+    },
+    "thirdperson_lefthand": {
+      "scale": [1, 1, 1],
+      "translation": [0, 4, 0]
+    },
+    "firstperson_righthand": {
+      "translation": [-1, 4, 0],
+      "scale": [1, 1.5, 1]
+    },
+    "firstperson_lefthand": {
+      "translation": [0, 4, 0],
+      "scale": [1, 1.5, 1]
+    }
+  }
+}

@@ -81,7 +81,10 @@ public class MagicEssenceItem extends Item {
             case ICE -> ChatFormatting.AQUA;
             case EARTH -> ChatFormatting.GREEN;
             case SPARK -> ChatFormatting.YELLOW;
-            case DARK -> ChatFormatting.BLACK;
+            case DARK -> ChatFormatting.DARK_GRAY;
+            case LIGHT -> ChatFormatting.WHITE;
+            case WIND -> ChatFormatting.GRAY;
+
         };
     }
 }

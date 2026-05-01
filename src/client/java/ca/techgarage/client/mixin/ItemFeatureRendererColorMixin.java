@@ -1,7 +1,7 @@
 package ca.techgarage.client.mixin;
 
 import ca.techgarage.client.render.ElementRenderData;
-import ca.techgarage.mixin.ElementColors;
+import ca.techgarage.ElementColors;
 import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

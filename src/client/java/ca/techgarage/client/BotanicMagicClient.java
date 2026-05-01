@@ -2,17 +2,21 @@ package ca.techgarage.client;
 
 import ca.techgarage.ModMenus;
 import ca.techgarage.bscm.Bscm;
+import ca.techgarage.client.screen.ClientTextbookOpener;
 import ca.techgarage.client.screen.RefinementTableScreen;
 import ca.techgarage.client.screen.ResearchTableScreen;
 import ca.techgarage.client.spells.BlockProjectileRenderer;
 import ca.techgarage.client.spells.SpellProjectileRenderer;
 import ca.techgarage.entity.BlockProjectileEntity;
 import ca.techgarage.entity.ModEntities;
+import ca.techgarage.items.Textbook;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+
+import java.util.List;
 
 public class BotanicMagicClient implements ClientModInitializer {
 	@Override
@@ -22,6 +26,10 @@ public class BotanicMagicClient implements ClientModInitializer {
 		EntityRenderers.register(ModEntities.SPELL_PROJECTILE, SpellProjectileRenderer::new);
 		EntityRenderers.register(ModEntities.BLOCK_PROJECTILE, BlockProjectileRenderer::new);
 
+		ca.techgarage.client.ClientTextbookOpener.init();
 
+	}
+	public void openTextbook(List<Textbook.FlowerEntry> entries) {
+		ClientTextbookOpener.open(entries);
 	}
 }

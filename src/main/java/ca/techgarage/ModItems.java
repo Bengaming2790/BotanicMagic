@@ -2,11 +2,9 @@ package ca.techgarage;
 
 
 import ca.techgarage.items.MagicEssenceItem;
-import ca.techgarage.items.seeds.GlaciolusSeedsItem;
-import ca.techgarage.items.seeds.PyrotuniaSeedsItem;
+import ca.techgarage.items.seeds.*;
 import ca.techgarage.items.SpellFlowerItem;
 import ca.techgarage.items.Textbook;
-import ca.techgarage.items.seeds.SparkspurSeedsItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -22,7 +20,10 @@ public class ModItems {
     public static Item PYROTUNIA_SEEDS;
     public static Item SPARKSPUR_SEEDS;
     public static Item GLACIOLUS_SEEDS;
-
+    public static Item TERROW_SEEDS;
+    public static Item HOLYHOCK_SEEDS;
+    public static Item ABYSSUM_SEEDS;
+    public static Item BEGONEYA_SEEDS;
 
     public static Item MAGIC_ESSENCE;
     public static Item FLOWER_HUSK;
@@ -32,6 +33,10 @@ public class ModItems {
         PYROTUNIA_SEEDS = register("pyrotunia_seeds", PyrotuniaSeedsItem::new, new Item.Properties().stacksTo(64));
         SPARKSPUR_SEEDS = register("sparkspur_seeds", SparkspurSeedsItem::new, new Item.Properties().stacksTo(64));
         GLACIOLUS_SEEDS = register("glaciolus_seeds", GlaciolusSeedsItem::new, new Item.Properties().stacksTo(64));
+        TERROW_SEEDS = register("terrow_seeds", TerrowSeedsItem::new, new Item.Properties().stacksTo(64));
+        HOLYHOCK_SEEDS = register("holyhock_seeds", HolyhockSeedsItem::new, new Item.Properties().stacksTo(64));
+        ABYSSUM_SEEDS = register("abyssum_seeds", AbyssumSeedsItem::new, new Item.Properties().stacksTo(64));
+        BEGONEYA_SEEDS = register("begoneya_seeds", BegoneyaSeedsItem::new, new Item.Properties().stacksTo(64));
         //misc
         TEXTBOOK = register("textbook", Textbook::new, new Item.Properties().stacksTo(1));
         MAGIC_ESSENCE = register("magic_essence", MagicEssenceItem::new, new Item.Properties().stacksTo(64));

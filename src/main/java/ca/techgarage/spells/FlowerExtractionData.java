@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public class FlowerExtractionData {
 
-    private final float elementChance;
-    private final float shapeChance;
-    private final float huskChance;
-    private final List<WeightedEntry<SpellElement>> elements;
-    private final List<WeightedEntry<MagicShape>> shapes;
+    public final float elementChance;
+    public final float shapeChance;
+    public final float huskChance;
+    public final List<WeightedEntry<SpellElement>> elements;
+    public final List<WeightedEntry<MagicShape>> shapes;
 
     public FlowerExtractionData(float elementChance, float shapeChance, float huskChance,
                                 List<WeightedEntry<SpellElement>> elements,

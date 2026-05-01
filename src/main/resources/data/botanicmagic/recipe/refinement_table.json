@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:red_carpet",
+    "C": "minecraft:smithing_table",
+    "I": "minecraft:iron_block",
+    "O": "minecraft:obsidian"
+  },
+  "pattern": [
+    " B ",
+    "ICI",
+    "IOI"
+  ],
+  "result": {
+    "id": "botanicmagic:refinement_table"
+  }
+}

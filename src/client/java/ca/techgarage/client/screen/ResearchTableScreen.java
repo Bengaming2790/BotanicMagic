@@ -10,22 +10,44 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMenu> {
-
+    private int imageWidth;
+    private int imageHeight;
     private static final Identifier TEXTURE =
-            Identifier.withDefaultNamespace("textures/gui/container/dispenser.png");
+            Identifier.fromNamespaceAndPath("botanicmagic", "textures/gui/research.png");
 
     public ResearchTableScreen(ResearchTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+
+        // actual hopper gui size
+        this.imageWidth = 176;
+        this.imageHeight = 133;
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        graphics.blit(
+    protected void init() {
+        super.init();
+
+        // centered like vanilla hopper
+        this.titleLabelX = 8;
+        this.titleLabelY = 6;
+
+        // player inventory text line above inventory
+        this.inventoryLabelX = 8;
+        this.inventoryLabelY = this.imageHeight - 94; // 39
+    }
+
+    @Override
+    public void extractBackground(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float delta) {
+        int x = this.leftPos;
+        int y = this.topPos;
+
+        // full hopper background
+        gfx.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                leftPos, topPos,
+                x, y,
                 0, 0,
-                imageWidth, imageHeight,
+                this.imageWidth, this.imageHeight,
                 256, 256
         );
 
@@ -33,18 +55,17 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         int max = menu.getMaxProgress();
 
         if (max > 0) {
-            int arrowWidth = Mth.ceil((progress / (float) max) * 24);
+            int width = Mth.ceil((progress / (float) max) * 24);
 
-            graphics.blit(
+            gfx.blit(
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    leftPos + 79,
-                    topPos + 34,
+                    x + 76,
+                    y + 21,
                     176, 0,
-                    arrowWidth, 16,
+                    width, 17,
                     256, 256
             );
         }
-
     }
 }

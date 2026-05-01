@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +18,10 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class EarthEffect implements Spell {
     private final float damage;
@@ -29,6 +33,7 @@ public class EarthEffect implements Spell {
 
     @Override
     public void apply(Level level, LivingEntity caster, LivingEntity target) {
+        caster.playSound(SoundEvents.ANVIL_BREAK, 2.0f, 0f);
 
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
@@ -223,7 +228,7 @@ public class EarthEffect implements Spell {
                 if (target == caster) continue;
 
                 if (caster instanceof Player player) {
-                    entity.hurt(level.damageSources().playerAttack(player), damage);
+                    target.hurt(level.damageSources().playerAttack(player), damage);
                 }
             }
         }

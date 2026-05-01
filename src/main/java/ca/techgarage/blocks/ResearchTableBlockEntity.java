@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 public class ResearchTableBlockEntity extends BlockEntity implements Container, MenuProvider {
 
-    private static final int EXTRACTION_TIME = 0;
+    private static final int EXTRACTION_TIME = 20;
     private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
     private int extractionProgress = 0;
 

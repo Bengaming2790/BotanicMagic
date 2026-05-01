@@ -5,5 +5,7 @@ public enum SpellElement {
     ICE,
     SPARK,
     EARTH,
-    DARK
+    DARK,
+    LIGHT,
+    WIND
 }

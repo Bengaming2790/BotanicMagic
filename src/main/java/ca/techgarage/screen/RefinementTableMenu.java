@@ -36,11 +36,12 @@ public class RefinementTableMenu extends AbstractContainerMenu {
 
         container.startOpen(inventory.player);
 
-        this.addSlot(new Slot(container, HUSK_SLOT, 44, 35));
-        this.addSlot(new Slot(container, ELEMENT_SLOT, 62, 35));
-        this.addSlot(new Slot(container, SHAPE_SLOT, 80, 35));
 
-        this.addSlot(new Slot(container, OUTPUT_SLOT, 116, 35) {
+        this.addSlot(new Slot(container, HUSK_SLOT, 8, 48));
+        this.addSlot(new Slot(container, ELEMENT_SLOT, 26, 48));
+        this.addSlot(new Slot(container, SHAPE_SLOT, 44, 48));
+
+        this.addSlot(new Slot(container, OUTPUT_SLOT, 98, 48) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -70,10 +71,10 @@ public class RefinementTableMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
 
         if (slotIndex < CONTAINER_SIZE) {
-            if (!this.moveItemStackTo(stack, CONTAINER_SIZE, this.slots.size(), true))
+            if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true))
                 return ItemStack.EMPTY;
         } else {
-            if (!this.moveItemStackTo(stack, HUSK_SLOT, OUTPUT_SLOT, false))
+            if (!moveItemStackTo(stack, HUSK_SLOT, OUTPUT_SLOT, false))
                 return ItemStack.EMPTY;
         }
 

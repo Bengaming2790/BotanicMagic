@@ -50,6 +50,18 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().noCollision().sound(SoundType.GRASS),
             true
     );
+    public static final Block HOLYHOCK = register(
+            "holyhock",
+            Holyhock::new,
+            BlockBehaviour.Properties.of().noCollision().sound(SoundType.GRASS),
+            true
+    );
+    public static final Block BEGONEYA = register(
+            "begoneya",
+            Begoneya::new,
+            BlockBehaviour.Properties.of().noCollision().sound(SoundType.GRASS),
+            true
+    );
     public static final Block RESEARCH_TABLE = register(
             "research_table",
             ResearchTableBlock::new,

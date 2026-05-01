@@ -26,22 +26,24 @@ public class ResearchTableMenu extends AbstractContainerMenu {
 
     public ResearchTableMenu(int syncId, Inventory inventory, Container container, ContainerData data) {
         super(ModMenus.RESEARCH_TABLE, syncId);
+
         checkContainerSize(container, CONTAINER_SIZE);
+
         this.container = container;
         this.data = data;
 
         container.startOpen(inventory.player);
 
-        this.addSlot(new Slot(container, INPUT_SLOT, 56, 35));
+        this.addSlot(new Slot(container, INPUT_SLOT, 62, 20));
 
-        this.addSlot(new Slot(container, OUTPUT_SLOT, 116, 35) {
+        this.addSlot(new Slot(container, OUTPUT_SLOT, 98, 20) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
 
-        this.addStandardInventorySlots(inventory, 8, 84);
+        this.addStandardInventorySlots(inventory, 8, 51);
 
         this.addDataSlots(data);
     }
@@ -56,11 +58,12 @@ public class ResearchTableMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
 
         if (slotIndex < CONTAINER_SIZE) {
-            if (!this.moveItemStackTo(stack, CONTAINER_SIZE, this.slots.size(), true)) {
+            if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-        } else {
-            if (!this.moveItemStackTo(stack, INPUT_SLOT, INPUT_SLOT + 1, false)) {
+        }
+        else {
+            if (!moveItemStackTo(stack, INPUT_SLOT, INPUT_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
         }
@@ -78,42 +81,19 @@ public class ResearchTableMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return container.stillValid(player);
     }
+
     public int getProgress() {
-        return this.data.get(0);
+        return data.get(0);
     }
 
     public int getMaxProgress() {
-        return this.data.get(1);
+        return data.get(1);
     }
-    private int progress;
-    private static final int MAX_PROGRESS = 60;
-
-    private final ContainerData dataAccess = new ContainerData() {
-        @Override
-        public int get(int index) {
-            return switch (index) {
-                case 0 -> progress;
-                case 1 -> MAX_PROGRESS;
-                default -> 0;
-            };
-        }
-
-        @Override
-        public void set(int index, int value) {
-            if (index == 0) progress = value;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-    };
 
     public int getScaledProgress() {
-        int progress = this.data.get(0);
-        int max = this.data.get(1);
-        int arrowWidth = 24;
-        return max != 0 && progress != 0 ? progress * arrowWidth / max : 0;
+        int progress = getProgress();
+        int max = getMaxProgress();
+        return max != 0 && progress != 0 ? progress * 24 / max : 0;
     }
 
     public Container getContainer() {

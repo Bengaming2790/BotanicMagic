@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class RefinementTableBlockEntity extends BlockEntity implements Container, MenuProvider {
 
     private int progress = 0;
-    private static final int MAX_TIME = 80;
+    private static final int MAX_TIME = 0;
     private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
 
     public RefinementTableBlockEntity(BlockPos pos, BlockState state) {

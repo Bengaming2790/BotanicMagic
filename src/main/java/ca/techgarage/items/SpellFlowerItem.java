@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 
 public class SpellFlowerItem extends Item {
 
-    private static int XP_COST = 1;
 
     public SpellFlowerItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -60,7 +59,7 @@ public class SpellFlowerItem extends Item {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-
+        player.playSound(SoundEvents.FIRECHARGE_USE, 1, 2);
         MagicEssenceData data = stack.get(ModDataComponents.MAGIC_ESSENCE_DATA);
 
         if (data == null || data.element().isEmpty() || data.shape().isEmpty()) {
@@ -88,6 +87,8 @@ public class SpellFlowerItem extends Item {
             case EARTH -> new EarthEffect(10.5f, shape);
             case SPARK -> new SparkEffect(12.0f, shape);
             case DARK -> new DarkEffect(12.5f, shape);
+            case LIGHT -> new LightEffect(12.5f, shape);
+            case WIND -> new WindEffect(10f, shape);
         };
 
 
@@ -135,7 +136,9 @@ public class SpellFlowerItem extends Item {
             case ICE -> ChatFormatting.AQUA;
             case EARTH -> ChatFormatting.GREEN;
             case SPARK -> ChatFormatting.YELLOW;
-            case DARK -> ChatFormatting.BLACK;
+            case DARK -> ChatFormatting.DARK_GRAY;
+            case LIGHT -> ChatFormatting.WHITE;
+            case WIND -> ChatFormatting.GRAY;
         };
     }
     public record SpellXpData(int cost) {}

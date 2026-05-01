@@ -8,6 +8,7 @@ import ca.techgarage.spells.SpellElement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -30,9 +31,11 @@ public class FireEffect implements Spell {
 
     @Override
     public void apply(Level level, LivingEntity caster, LivingEntity target) {
+        caster.playSound(SoundEvents.FIRECHARGE_USE, 1.0f, 1.0f);
 
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
+
             return;
         }
         if (shape == MagicShape.CONE) {

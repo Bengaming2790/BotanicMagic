@@ -2,6 +2,25 @@
   "botanicmagic.itemgroup": "Botanic Magic",
   "item.botanicmagic.textbook": "Floral Enchantopedia",
   "block.botanicmagic.pyrotunia": "Pyrotunia",
-  "block.botanicmagic.sparkspur": "Sparkspur"
+  "block.botanicmagic.sparkspur": "Sparkspur",
+  "item.botanicmagic.flower_husk": "Flower Husk",
+  "item.botanicmagic.spell_flower": "Spell Flower",
+  "block.botanicmagic.glaciolus": "Glaciolus",
+  "block.botanicmagic.terrow": "Terrow",
+  "block.botanicmagic.abyssum": "Abyssum",
+  "block.botanicmagic.holyhock": "Holyhock",
+  "block.botanicmagic.begoneya": "Begoneya",
+  "block.botanicmagic.research_table": "Research Table",
+  "block.botanicmagic.refinement_table": "Refinement Table",
+  "item.botanicmagic.magic_essence": "Magic Essence",
+  "item.botanicmagic.glaciolus_seeds": "Glaciolus Seed Bag",
+  "item.botanicmagic.pyrotunia_seeds": "Pyrotunia Seed Bag",
+  "item.botanicmagic.sparkspur_seeds": "Sparkspur Seed Bag",
+  "item.botanicmagic.terrow_seeds": "Terrow Seed Bag",
+  "item.botanicmagic.holyhock_seeds": "Holyhock Seed Bag",
+  "item.botanicmagic.abyssum_seeds": "Abyssum Seed Bag",
+  "item.botanicmagic.begoneya_seeds": "Begoneya Seed Bag"
+
+
 
 }

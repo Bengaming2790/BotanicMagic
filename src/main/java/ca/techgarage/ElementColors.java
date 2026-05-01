@@ -1,4 +1,4 @@
-package ca.techgarage.mixin;
+package ca.techgarage;
 
 import ca.techgarage.spells.SpellElement;
 
@@ -11,6 +11,8 @@ public class ElementColors {
             case EARTH -> 0x33FF66;
             case SPARK -> 0xFFE066;
             case DARK  -> 0x7A00CC;
+            case LIGHT -> 0xFFFFFF;
+            case WIND -> 0xFFFFFFF;
         };
     }
 }

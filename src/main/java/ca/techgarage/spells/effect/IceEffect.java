@@ -8,13 +8,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class IceEffect implements Spell {
 
@@ -30,6 +34,8 @@ public class IceEffect implements Spell {
 
     @Override
     public void apply(Level level, LivingEntity caster, LivingEntity target) {
+        caster.playSound(SoundEvents.AMETHYST_BLOCK_BREAK, 2.0f, 0f);
+
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
             return;

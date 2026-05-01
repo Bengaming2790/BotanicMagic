@@ -49,12 +49,12 @@ public class BotanicMagic implements ModInitializer {
 				output.accept(ModItems.TEXTBOOK);
 				output.accept(ModBlocks.RESEARCH_TABLE);
 				output.accept(ModBlocks.PYROTUNIA);
-				output.accept(ModItems.PYROTUNIA_SEEDS);
 				output.accept(ModBlocks.SPARKSPUR);
-				output.accept(ModItems.SPARKSPUR_SEEDS);
 				output.accept(ModBlocks.GLACIOLUS);
 				output.accept(ModBlocks.TERROW);
 				output.accept(ModBlocks.ABYSSUM);
+				output.accept(ModBlocks.HOLYHOCK);
+				output.accept(ModBlocks.BEGONEYA);
 			})
 			.build();
 

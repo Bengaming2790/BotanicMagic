@@ -1,0 +1,8 @@
+{
+  "variants": {
+      "age=0": { "model": "botanicmagic:block/terrow_stage0" },
+      "age=1": { "model": "botanicmagic:block/terrow_stage1" },
+      "age=2": { "model": "botanicmagic:block/terrow_stage2" },
+      "age=3": { "model": "botanicmagic:block/terrow_stage3" }
+  }
+}

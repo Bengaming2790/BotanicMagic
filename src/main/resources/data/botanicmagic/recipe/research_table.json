@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:blue_carpet",
+    "C": "minecraft:crafting_table",
+    "I": "minecraft:iron_block"
+  },
+  "pattern": [
+    " B ",
+    "ICI",
+    "III"
+  ],
+  "result": {
+    "id": "botanicmagic:research_table"
+  }
+}

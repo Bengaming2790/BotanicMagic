@@ -5,6 +5,8 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -14,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Comparator;
@@ -29,6 +32,7 @@ public class SpellProjectileEntity extends Entity {
     private int lifetimeTicks = 0;
     private static final int MAX_LIFETIME = 100;
     private boolean sonicBoomOnHit = false;
+    private boolean wind;
     public ParticleOptions particle;
 
     public SpellProjectileEntity(EntityType<?> type, Level level) {
@@ -61,6 +65,10 @@ public class SpellProjectileEntity extends Entity {
     public void setSonicBoomOnHit(boolean value) {
         this.sonicBoomOnHit = value;
     }
+    public void setWindOnHit(boolean value) {
+        this.wind = value;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -119,11 +127,14 @@ public class SpellProjectileEntity extends Entity {
                 .min(Comparator.comparingDouble(e -> e.distanceToSqr(this)))
                 .ifPresent(target -> {
                     effect.apply(this.level(), caster, target);
-
+                    if (sonicBoomOnHit) target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
                     if (sonicBoomOnHit && this.level().getRandom().nextInt(200) == 0) {
                         target.hurt(this.level().damageSources().sonicBoom(caster), 30.0F);
                     }
-
+                    if (wind) {
+                        Vec3 velocity = this.getDeltaMovement().normalize();
+                        target.knockback(2.0, -velocity.x, -velocity.z);
+                    }
                     this.discard();
                 });
     }

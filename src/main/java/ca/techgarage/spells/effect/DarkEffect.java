@@ -10,6 +10,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +19,10 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class DarkEffect implements Spell {
     private final float damage;
@@ -30,6 +34,7 @@ public class DarkEffect implements Spell {
 
     @Override
     public void apply(Level level, LivingEntity caster, LivingEntity target) {
+        caster.playSound(SoundEvents.WARDEN_SONIC_BOOM, 1f, 0f);
 
         if (shape == MagicShape.COLUMN) {
             applyColumn(level, caster);
@@ -40,7 +45,9 @@ public class DarkEffect implements Spell {
             applyCone(level, caster);
             return;
         }
-
+        if (shape == MagicShape.AOE) {
+            applyAoeDamage(caster, 5f);
+        }
         if (shape == MagicShape.PROJECTILE) {
             if (target == null) {
                 spawnProjectile(level, caster);
@@ -57,6 +64,8 @@ public class DarkEffect implements Spell {
 
         if (target != null) {
             target.hurt(level.damageSources().sonicBoom(caster), damage);
+            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
+
         }
     }
 
@@ -132,7 +141,10 @@ public class DarkEffect implements Spell {
                 if (level.getRandom().nextInt(200) == 0) {
                     entity.hurt(level.damageSources().sonicBoom(caster), 30);
                 }
+                entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
+
                 entity.hurt(level.damageSources().sonicBoom(caster), damage);
+
             }
         }
     }
@@ -184,7 +196,59 @@ public class DarkEffect implements Spell {
                 if (level.getRandom().nextInt(200) == 0) {
                     target.hurt(level.damageSources().sonicBoom(caster), 30);
                 }
+
                 target.hurt(level.damageSources().sonicBoom(caster), damage);
+            }
+        }
+    }
+
+    private void applyAoeDamage(LivingEntity attacker, float radius) {
+        Level world = attacker.level();
+
+        AABB box = new AABB(
+                attacker.getX() - radius, attacker.getY() - radius, attacker.getZ() - radius,
+                attacker.getX() + radius, attacker.getY() + radius, attacker.getZ() + radius
+        );
+
+        List<LivingEntity> entities = world.getEntitiesOfClass(
+                LivingEntity.class,
+                box,
+                e -> e != attacker && e.isAlive()
+        );
+
+        for (LivingEntity entity : entities) {
+            if (entity.distanceToSqr(attacker) <= radius * radius) {
+
+                entity.hurtServer(
+                        (ServerLevel) world,
+                        world.damageSources().playerAttack((Player) attacker),
+                        damage
+                );
+                entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
+
+            }
+        }
+
+        if (world instanceof ServerLevel serverLevel) {
+            int points = 480;
+
+            for (int i = 0; i < points; i++) {
+
+                double theta = serverLevel.getRandom().nextDouble() * Math.PI * 2.0;
+                double phi = Math.acos(2.0 * serverLevel.getRandom().nextDouble() - 1.0);
+
+                double x = attacker.getX() + radius * Math.sin(phi) * Math.cos(theta);
+                double y = attacker.getY() + 1.0 + radius * Math.cos(phi);
+                double z = attacker.getZ() + radius * Math.sin(phi) * Math.sin(theta);
+
+                serverLevel.sendParticles(
+                        new DustParticleOptions(0x000000, 1),
+                        x, y, z,
+                        5,
+                        0, 0, 0,
+                        0
+                );
+
             }
         }
     }

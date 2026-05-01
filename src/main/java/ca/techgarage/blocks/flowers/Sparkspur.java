@@ -20,7 +20,8 @@ public class Sparkspur extends GrowableFlowerBlock implements IExtractableFlower
             0.25f,  // 25% - shape
             0.20f,  // 20% - husk
             // Remaining 30% - FAILED
-            List.of(new FlowerExtractionData.WeightedEntry<>(SpellElement.SPARK, 1.0f)),
+            List.of(new FlowerExtractionData.WeightedEntry<>(SpellElement.SPARK, 1.0f),
+                    new FlowerExtractionData.WeightedEntry<>(SpellElement.LIGHT, 0.01f)),
             List.of(
                     new FlowerExtractionData.WeightedEntry<>(MagicShape.PROJECTILE, 1.0f),
                     new FlowerExtractionData.WeightedEntry<>(MagicShape.CONE,       0.5f),

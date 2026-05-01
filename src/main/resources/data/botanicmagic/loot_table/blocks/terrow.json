@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "botanicmagic:terrow",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "botanicmagic:terrow",
+              "properties": {
+                "age": "3"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "botanicmagic:terrow_seeds"
+        }
+      ]
+    }
+  ]
+}
