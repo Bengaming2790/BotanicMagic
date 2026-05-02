@@ -23,13 +23,35 @@ public class ModWorldgen {
     private static final ResourceKey<PlacedFeature> SPARKSPUR_PLACED =
             ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("botanicmagic", "sparkspur"));
 
+    private static final ResourceKey<PlacedFeature> ABYSSUM_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("botanicmagic", "abyssum"));
+
+    private static final ResourceKey<PlacedFeature> BEGONEYA_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("botanicmagic", "begoneya"));
+
+    private static final ResourceKey<PlacedFeature> HOLYHOCK_PLACED =
+            ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath("botanicmagic", "holyhock"));
     public static void register() {
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(BiomeTags.IS_SAVANNA).or(BiomeSelectors.tag(BiomeTags.IS_BADLANDS)),
                 GenerationStep.Decoration.VEGETAL_DECORATION,
                 PYROTUNIA_PLACED
         );
-
+        BiomeModifications.addFeature(
+                BiomeSelectors.tag(BiomeTags.HAS_SWAMP_HUT),
+                GenerationStep.Decoration.VEGETAL_DECORATION,
+                ABYSSUM_PLACED
+        );
+        BiomeModifications.addFeature(
+                BiomeSelectors.tag(BiomeTags.IS_MOUNTAIN),
+                GenerationStep.Decoration.VEGETAL_DECORATION,
+                HOLYHOCK_PLACED
+        );
+        BiomeModifications.addFeature(
+                BiomeSelectors.tag(BiomeTags.IS_OVERWORLD),
+                GenerationStep.Decoration.VEGETAL_DECORATION,
+                BEGONEYA_PLACED
+        );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(BiomeTags.IS_MOUNTAIN).or(BiomeSelectors.tag(BiomeTags.IS_TAIGA)),
                 GenerationStep.Decoration.VEGETAL_DECORATION,
