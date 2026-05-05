@@ -47,7 +47,7 @@ public class WindEffect implements Spell {
             );
         } else {
             if (level instanceof ServerLevel serverLevel) {
-                target.hurt(level.damageSources().lightningBolt(), damage);
+                target.hurt(level.damageSources().playerAttack((Player) caster), damage);
                 applyKnockbackFromCaster(caster, target);
             }
         }
@@ -63,7 +63,11 @@ public class WindEffect implements Spell {
                 new SpellProjectileEntity(ModEntities.SPELL_PROJECTILE, level, 0xFFFFFF, ParticleTypes.WHITE_SMOKE);
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null || !(lvl instanceof ServerLevel sl)) return;
+            target.hurtServer(sl, lvl.damageSources().playerAttack((Player) caster), damage);
+            applyKnockbackFromCaster(c, target);
+        }, caster);
         projectile.setWindOnHit(true);
 
         Vec3 direction = caster.getLookAngle().scale(0.5);
@@ -123,7 +127,7 @@ public class WindEffect implements Spell {
 
             for (LivingEntity entity : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (entity == caster) continue;
-                entity.hurt(level.damageSources().lightningBolt(), damage);
+                entity.hurt(level.damageSources().playerAttack((Player) caster), damage);
                 applyKnockbackFromCaster(caster, entity);
             }
         }
@@ -165,7 +169,7 @@ public class WindEffect implements Spell {
 
             for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, box)) {
                 if (target == caster) continue;
-                target.hurt(level.damageSources().lightningBolt(), damage);
+                target.hurt(level.damageSources().playerAttack((Player) caster), damage);
                 applyKnockbackFromCaster(caster, target);
             }
         }

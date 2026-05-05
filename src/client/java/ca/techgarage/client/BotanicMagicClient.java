@@ -1,7 +1,6 @@
 package ca.techgarage.client;
 
 import ca.techgarage.ModMenus;
-import ca.techgarage.bscm.Bscm;
 import ca.techgarage.client.screen.ClientTextbookOpener;
 import ca.techgarage.client.screen.RefinementTableScreen;
 import ca.techgarage.client.screen.ResearchTableScreen;
@@ -10,7 +9,6 @@ import ca.techgarage.client.spells.SpellProjectileRenderer;
 import ca.techgarage.entity.BlockProjectileEntity;
 import ca.techgarage.entity.ModEntities;
 import ca.techgarage.items.Textbook;
-import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;

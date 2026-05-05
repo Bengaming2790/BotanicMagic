@@ -67,15 +67,16 @@ public class FireEffect implements Spell {
     private void spawnProjectile(Level level, LivingEntity caster) {
         SpellProjectileEntity projectile =
                 new SpellProjectileEntity(ModEntities.SPELL_PROJECTILE, level, 0xFF5500, ParticleTypes.FLAME);
-
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
-
-        Vec3 direction = caster.getLookAngle().scale(0.5);
-        projectile.setDeltaMovement(direction);
-
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null || !(lvl instanceof ServerLevel sl)) return;
+            target.hurtServer(sl, lvl.damageSources().onFire(), damage);
+            target.igniteForSeconds(3);
+        }, caster);
+        projectile.setDeltaMovement(caster.getLookAngle().scale(0.5));
         level.addFreshEntity(projectile);
     }
+    
     private void applyColumn(Level level, LivingEntity caster) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
@@ -245,4 +246,27 @@ public class FireEffect implements Spell {
             }
         }
     }
+
+    public static class FireProjectileHitSpell implements Spell {
+        private final float damage;
+
+        public FireProjectileHitSpell(float damage) {
+            this.damage = damage;
+        }
+
+        @Override
+        public void apply(Level level, LivingEntity caster, LivingEntity target) {
+            if (!(level instanceof ServerLevel serverLevel)) return;
+            if (target == null) return;
+
+            target.hurtServer(
+                    serverLevel,
+                    level.damageSources().playerAttack((Player) caster),
+                    damage
+            );
+            target.igniteForSeconds(3);
+        }
+    }
+
 }
+

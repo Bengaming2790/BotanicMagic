@@ -10,6 +10,7 @@ import ca.techgarage.spells.effect.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,11 +56,11 @@ public class SpellFlowerItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        level.playSound(player, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1, 2);
 
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        player.playSound(SoundEvents.FIRECHARGE_USE, 1, 2);
         MagicEssenceData data = stack.get(ModDataComponents.MAGIC_ESSENCE_DATA);
 
         if (data == null || data.element().isEmpty() || data.shape().isEmpty()) {

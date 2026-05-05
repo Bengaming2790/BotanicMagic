@@ -1,5 +1,6 @@
 package ca.techgarage.screen;
 
+import ca.techgarage.ModItems;
 import ca.techgarage.ModMenus;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -36,9 +37,15 @@ public class RefinementTableMenu extends AbstractContainerMenu {
 
         container.startOpen(inventory.player);
 
+        this.addSlot(new Slot(container, HUSK_SLOT, 8, 48) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(ModItems.FLOWER_HUSK);
+            }
+        });
 
-        this.addSlot(new Slot(container, HUSK_SLOT, 8, 48));
         this.addSlot(new Slot(container, ELEMENT_SLOT, 26, 48));
+
         this.addSlot(new Slot(container, SHAPE_SLOT, 44, 48));
 
         this.addSlot(new Slot(container, OUTPUT_SLOT, 98, 48) {
@@ -46,10 +53,21 @@ public class RefinementTableMenu extends AbstractContainerMenu {
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
+
+            @Override
+            public void onTake(Player player, ItemStack stack) {
+                super.onTake(player, stack);
+
+                // Consume inputs ONLY when result is taken
+                container.getItem(HUSK_SLOT).shrink(1);
+                container.getItem(ELEMENT_SLOT).shrink(1);
+                container.getItem(SHAPE_SLOT).shrink(1);
+
+                container.setChanged();
+            }
         });
 
         this.addDataSlots(data);
-
         this.addStandardInventorySlots(inventory, 8, 84);
     }
 
@@ -70,16 +88,32 @@ public class RefinementTableMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
 
-        if (slotIndex < CONTAINER_SIZE) {
-            if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true))
+        if (slotIndex == OUTPUT_SLOT) {
+            if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true)) {
                 return ItemStack.EMPTY;
-        } else {
-            if (!moveItemStackTo(stack, HUSK_SLOT, OUTPUT_SLOT, false))
-                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(player, stack);
+
+            return original;
         }
 
-        if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
-        else slot.setChanged();
+        if (slotIndex < CONTAINER_SIZE) {
+            if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true)) {
+                return ItemStack.EMPTY;
+            }
+        }
+        else {
+            if (!moveItemStackTo(stack, HUSK_SLOT, OUTPUT_SLOT, false)) {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        if (stack.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
 
         return original;
     }

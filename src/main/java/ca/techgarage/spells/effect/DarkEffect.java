@@ -79,8 +79,10 @@ public class DarkEffect implements Spell {
                 );
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
-
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null) return;
+            target.hurt(lvl.damageSources().sonicBoom(c), damage);
+        }, caster);
         projectile.setSonicBoomOnHit(true);
         Vec3 direction = caster.getLookAngle().scale(0.5);
         projectile.setDeltaMovement(direction);

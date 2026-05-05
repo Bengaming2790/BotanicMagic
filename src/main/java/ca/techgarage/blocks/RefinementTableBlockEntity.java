@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class RefinementTableBlockEntity extends BlockEntity implements Container, MenuProvider {
 
     private int progress = 0;
-    private static final int MAX_TIME = 0;
+    private static final int MAX_TIME = 1;
     private final NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
 
     public RefinementTableBlockEntity(BlockPos pos, BlockState state) {
@@ -49,15 +49,13 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
 
         be.setChanged();
     }
-
     private void refine() {
         if (!canRefine()) return;
+
         ItemStack husk = getItem(RefinementTableMenu.HUSK_SLOT);
         ItemStack elementEssence = getItem(RefinementTableMenu.ELEMENT_SLOT);
         ItemStack shapeEssence = getItem(RefinementTableMenu.SHAPE_SLOT);
-        System.out.println("HUSK: " + husk);
-        System.out.println("ELEMENT: " + elementEssence.get(ModDataComponents.MAGIC_ESSENCE_DATA));
-        System.out.println("SHAPE: " + shapeEssence.get(ModDataComponents.MAGIC_ESSENCE_DATA));
+
         if (!husk.is(ModItems.FLOWER_HUSK)) return;
 
         MagicEssenceData elementData = elementEssence.get(ModDataComponents.MAGIC_ESSENCE_DATA);
@@ -73,10 +71,6 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
 
         if (!result.isEmpty()) {
             setItem(RefinementTableMenu.OUTPUT_SLOT, result.copy());
-
-            husk.shrink(1);
-            elementEssence.shrink(1);
-            shapeEssence.shrink(1);
         }
     }
 
@@ -107,6 +101,7 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
         ItemStack husk = getItem(RefinementTableMenu.HUSK_SLOT);
         ItemStack elementEssence = getItem(RefinementTableMenu.ELEMENT_SLOT);
         ItemStack shapeEssence = getItem(RefinementTableMenu.SHAPE_SLOT);
+        ItemStack output = getItem(RefinementTableMenu.OUTPUT_SLOT);
 
         if (husk.isEmpty() || elementEssence.isEmpty() || shapeEssence.isEmpty()) {
             return false;
@@ -119,6 +114,9 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
 
         if (elementData == null || shapeData == null) return false;
         if (elementData.element().isEmpty() || shapeData.shape().isEmpty()) return false;
+        if (!output.isEmpty()) {
+            return false;
+        }
 
         return true;
     }

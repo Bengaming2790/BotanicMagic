@@ -110,33 +110,39 @@ public class SpellProjectileEntity extends Entity {
             }
         }
     }
+    public void setOnHitEffect(Spell onHitSpell, LivingEntity caster) {
+        this.effect = onHitSpell;
+        this.caster = caster;
+    }
 
     private void checkHit() {
-        AABB hitbox = new AABB(
-                getX() - 0.3, getY() - 0.3, getZ() - 0.3,
-                getX() + 0.3, getY() + 0.3, getZ() + 0.3
-        );
+        if (lifetimeTicks < 5) return;
 
         List<LivingEntity> targets = this.level().getEntitiesOfClass(
                 LivingEntity.class,
-                hitbox,
-                e -> e != caster && e.isAlive()
+                this.getBoundingBox().inflate(0.5),
+                e -> e.isAlive() && (caster == null || !e.getUUID().equals(caster.getUUID()))
         );
 
-        targets.stream()
-                .min(Comparator.comparingDouble(e -> e.distanceToSqr(this)))
-                .ifPresent(target -> {
-                    effect.apply(this.level(), caster, target);
-                    if (sonicBoomOnHit) target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
-                    if (sonicBoomOnHit && this.level().getRandom().nextInt(200) == 0) {
-                        target.hurt(this.level().damageSources().sonicBoom(caster), 30.0F);
-                    }
-                    if (wind) {
-                        Vec3 velocity = this.getDeltaMovement().normalize();
-                        target.knockback(2.0, -velocity.x, -velocity.z);
-                    }
-                    this.discard();
-                });
+        if (targets.isEmpty()) return;
+
+        LivingEntity target = targets.get(0);
+        System.out.println("[HIT] target=" + target.getClass().getSimpleName()
+                + " effect=" + effect.getClass().getSimpleName());
+
+        this.discard(); // discard FIRST before applying effect
+        effect.apply(this.level(), caster, target);
+
+        if (sonicBoomOnHit) {
+            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 20 * 5, 1, true, true, true));
+            if (this.level().getRandom().nextInt(200) == 0) {
+                target.hurt(this.level().damageSources().sonicBoom(caster), 30.0F);
+            }
+        }
+        if (wind) {
+            Vec3 velocity = this.getDeltaMovement().normalize();
+            target.knockback(2.0, -velocity.x, -velocity.z);
+        }
     }
 
     @Override

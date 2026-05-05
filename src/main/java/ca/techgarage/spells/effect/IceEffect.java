@@ -68,8 +68,12 @@ public class IceEffect implements Spell {
                 new SpellProjectileEntity(ModEntities.SPELL_PROJECTILE, level, 0xFF5500, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.PACKED_ICE.defaultBlockState()));
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
-
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null || !(lvl instanceof ServerLevel sl)) return;
+            target.hurtServer(sl, lvl.damageSources().freeze(), damage);
+            target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20 * 10, 1));
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 10, 1));
+        }, caster);
         Vec3 direction = caster.getLookAngle().scale(0.5);
         projectile.setDeltaMovement(direction);
 

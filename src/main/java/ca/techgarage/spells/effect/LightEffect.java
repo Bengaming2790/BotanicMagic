@@ -79,9 +79,12 @@ public class LightEffect implements Spell {
                 );
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
-
-        projectile.setSonicBoomOnHit(false);
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null || !(lvl instanceof ServerLevel sl)) return;
+            target.hurtServer(sl, lvl.damageSources().playerAttack((Player) c), damage);
+            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 20 * 5, 1, true, true, true));
+            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 * 5, 1, true, true, true));
+        }, caster);
         Vec3 direction = caster.getLookAngle().scale(0.5);
         projectile.setDeltaMovement(direction);
 

@@ -60,8 +60,11 @@ public class SparkEffect implements Spell {
                 new SpellProjectileEntity(ModEntities.SPELL_PROJECTILE, level, 0xFF5500, ParticleTypes.ELECTRIC_SPARK);
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
-        projectile.setEffect(this, caster);
-
+        projectile.setOnHitEffect((lvl, c, target) -> {
+            if (target == null || !(lvl instanceof ServerLevel sl)) return;
+            target.hurtServer(sl, lvl.damageSources().lightningBolt(), damage);
+            target.igniteForSeconds(2);
+        }, caster);
         Vec3 direction = caster.getLookAngle().scale(0.5);
         projectile.setDeltaMovement(direction);
 

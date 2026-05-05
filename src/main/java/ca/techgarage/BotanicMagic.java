@@ -1,7 +1,6 @@
 package ca.techgarage;
 
 import ca.techgarage.blocks.ModBlockEntities;
-import ca.techgarage.bscm.Bscm;
 import ca.techgarage.entity.ModEntities;
 import net.fabricmc.api.ModInitializer;
 
@@ -27,7 +26,6 @@ public class BotanicMagic implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("[Botanic Magic] Initializing BM");
-		Bscm.load(BotanicConfig.class, "botanicmagic");
 		ModDataComponents.register();
 		ModBlocks.initialize();
 		ModItems.initialize();
@@ -35,7 +33,8 @@ public class BotanicMagic implements ModInitializer {
 		ModMenus.register();
 		ModRecipes.register();
 		ModEntities.register();
-		if (!BotanicConfig.isModFest) ModWorldgen.register();
+//		if (!BotanicConfig.isModFest)
+			ModWorldgen.register();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, CUSTOM_CREATIVE_TAB_KEY, CUSTOM_CREATIVE_TAB);
 	}
 
@@ -43,11 +42,12 @@ public class BotanicMagic implements ModInitializer {
 			BuiltInRegistries.CREATIVE_MODE_TAB.key(), Identifier.fromNamespaceAndPath(MOD_ID, "botanic_magic")
 	);
 	public static final CreativeModeTab CUSTOM_CREATIVE_TAB = FabricCreativeModeTab.builder()
-			.icon(() -> new ItemStack(ModItems.TEXTBOOK))
+			.icon(() -> new ItemStack(ModItems.MAGIC_ESSENCE))
 			.title(Component.translatable("botanicmagic.itemgroup"))
 			.displayItems((params, output) -> {
 				output.accept(ModItems.TEXTBOOK);
 				output.accept(ModBlocks.RESEARCH_TABLE);
+				output.accept(ModBlocks.REFINEMENT_TABLE);
 				output.accept(ModBlocks.PYROTUNIA);
 				output.accept(ModBlocks.SPARKSPUR);
 				output.accept(ModBlocks.GLACIOLUS);
@@ -55,6 +55,7 @@ public class BotanicMagic implements ModInitializer {
 				output.accept(ModBlocks.ABYSSUM);
 				output.accept(ModBlocks.HOLYHOCK);
 				output.accept(ModBlocks.BEGONEYA);
+
 			})
 			.build();
 
