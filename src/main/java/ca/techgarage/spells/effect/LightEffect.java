@@ -75,7 +75,7 @@ public class LightEffect implements Spell {
                         ModEntities.SPELL_PROJECTILE,
                         level,
                         0xFF5500,
-                        new DustParticleOptions(0x000000, 1)
+                        ParticleTypes.WAX_OFF
                 );
 
         projectile.setPos(caster.getX(), caster.getEyeY(), caster.getZ());
