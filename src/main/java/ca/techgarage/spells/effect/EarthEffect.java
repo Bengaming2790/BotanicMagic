@@ -23,6 +23,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
+import static ca.techgarage.entity.BlockProjectileEntity.deniedBlocks;
+
 public class EarthEffect implements Spell {
     private final float damage;
     private final MagicShape shape;
@@ -102,7 +104,7 @@ public class EarthEffect implements Spell {
         projectile.setOriginBlockPos(targetPos);
 
 
-        if (!(caster instanceof Player player && player.gameMode().equals(GameType.ADVENTURE))) {
+        if (!(caster instanceof Player player && player.gameMode().equals(GameType.ADVENTURE)) && !deniedBlocks.contains(level.getBlockState(targetPos).getBlock())) {
             level.removeBlock(targetPos, false);
         }
 

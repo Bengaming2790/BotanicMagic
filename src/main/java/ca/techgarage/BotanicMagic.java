@@ -5,6 +5,7 @@ import ca.techgarage.entity.ModEntities;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 
 public class BotanicMagic implements ModInitializer {
@@ -36,6 +39,21 @@ public class BotanicMagic implements ModInitializer {
 //		if (!BotanicConfig.isModFest)
 			ModWorldgen.register();
 		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, CUSTOM_CREATIVE_TAB_KEY, CUSTOM_CREATIVE_TAB);
+		Path configDir = net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir();
+
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+
+			DeniedBlockListAdder.loadDeniedBlocks(configDir.getParent());
+
+		});
+
+		ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+
+			DeniedBlockListAdder.saveDeniedBlocks(
+					configDir.getParent()
+			);
+
+		});
 	}
 
 	public static final ResourceKey<CreativeModeTab> CUSTOM_CREATIVE_TAB_KEY = ResourceKey.create(

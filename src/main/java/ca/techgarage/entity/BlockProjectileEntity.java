@@ -23,16 +23,19 @@ import net.minecraft.world.phys.HitResult;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+
 public class BlockProjectileEntity extends ThrowableProjectile {
 
     private BlockState blockState;
     private float damage = 4.0f;
     private BlockPos originPos;
     private Display.BlockDisplay display;
+    public static ArrayList<Block> deniedBlocks = new ArrayList<>();
+
     public BlockProjectileEntity(EntityType<? extends BlockProjectileEntity> type, Level level) {
         super(type, level);
     }
-
     public BlockProjectileEntity(EntityType<? extends BlockProjectileEntity> type, Level level, LivingEntity owner) {
         super(type, owner.getX(), owner.getEyeY() - 0.1, owner.getZ(), level);
         this.setOwner(owner);
@@ -83,7 +86,7 @@ public class BlockProjectileEntity extends ThrowableProjectile {
             createDisplay();
             display.setTransformation(
                     new Transformation(
-                            new Vector3f(-0.5f, -0.5f, -0.5f), // center correction
+                            new Vector3f(-0.5f, -0.5f, -0.5f),
                             new Quaternionf(),
                             new Vector3f(1f, 1f, 1f),
                             new Quaternionf()
@@ -115,7 +118,7 @@ public class BlockProjectileEntity extends ThrowableProjectile {
         if (!level().isClientSide() && blockState != null) {
 
             BlockPos placePos = BlockPos.containing(result.getLocation());
-            if (entity instanceof Player player && !player.gameMode().equals(GameType.ADVENTURE)) {
+            if (entity instanceof Player player && !player.gameMode().equals(GameType.ADVENTURE) && !deniedBlocks.contains(blockState.getBlock())) {
                 if (level().getBlockState(placePos).canBeReplaced()) {
                     level().setBlock(placePos, blockState, 3);
                 } else {

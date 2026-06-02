@@ -49,26 +49,41 @@ public class RefinementTableMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, SHAPE_SLOT, 44, 48));
 
         this.addSlot(new Slot(container, OUTPUT_SLOT, 98, 48) {
+
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
             }
 
             @Override
-            public void onTake(Player player, ItemStack stack) {
-                super.onTake(player, stack);
+            public boolean mayPickup(Player player) {
+                return hasValidRecipe();
+            }
 
-                // Consume inputs ONLY when result is taken
+            @Override
+            public void onTake(Player player, ItemStack stack) {
+                if (!hasValidRecipe()) {
+                    return;
+                }
+
                 container.getItem(HUSK_SLOT).shrink(1);
                 container.getItem(ELEMENT_SLOT).shrink(1);
                 container.getItem(SHAPE_SLOT).shrink(1);
 
                 container.setChanged();
+
+                super.onTake(player, stack);
             }
         });
 
         this.addDataSlots(data);
         this.addStandardInventorySlots(inventory, 8, 84);
+    }
+
+    private boolean hasValidRecipe() {
+        return !container.getItem(HUSK_SLOT).isEmpty()
+                && !container.getItem(ELEMENT_SLOT).isEmpty()
+                && !container.getItem(SHAPE_SLOT).isEmpty();
     }
 
     public int getProgress() {
@@ -83,12 +98,19 @@ public class RefinementTableMenu extends AbstractContainerMenu {
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         Slot slot = this.slots.get(slotIndex);
 
-        if (!slot.hasItem()) return ItemStack.EMPTY;
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
 
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
 
         if (slotIndex == OUTPUT_SLOT) {
+
+            if (!hasValidRecipe()) {
+                return ItemStack.EMPTY;
+            }
+
             if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
@@ -102,8 +124,7 @@ public class RefinementTableMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, CONTAINER_SIZE, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-        }
-        else {
+        } else {
             if (!moveItemStackTo(stack, HUSK_SLOT, OUTPUT_SLOT, false)) {
                 return ItemStack.EMPTY;
             }
@@ -128,6 +149,7 @@ public class RefinementTableMenu extends AbstractContainerMenu {
     }
 
     private static class SimpleContainerData implements ContainerData {
+
         @Override
         public int get(int index) {
             return 0;

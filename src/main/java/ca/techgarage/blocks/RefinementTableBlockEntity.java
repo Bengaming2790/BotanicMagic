@@ -32,23 +32,7 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
     }
 
 
-    public static void tick(Level level, BlockPos pos, BlockState state, RefinementTableBlockEntity be) {
-        if (level.isClientSide()) return;
 
-        if (!be.canRefine()) {
-            be.progress = 0;
-            return;
-        }
-
-        be.progress++;
-
-        if (be.progress >= MAX_TIME) {
-            be.progress = 0;
-            be.refine();
-        }
-
-        be.setChanged();
-    }
     private void refine() {
         if (!canRefine()) return;
 
@@ -73,7 +57,39 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
             setItem(RefinementTableMenu.OUTPUT_SLOT, result.copy());
         }
     }
+    private void updateResult() {
+        ItemStack husk = getItem(RefinementTableMenu.HUSK_SLOT);
+        ItemStack elementEssence = getItem(RefinementTableMenu.ELEMENT_SLOT);
+        ItemStack shapeEssence = getItem(RefinementTableMenu.SHAPE_SLOT);
 
+        if (husk.isEmpty() || elementEssence.isEmpty() || shapeEssence.isEmpty()) {
+            setItem(RefinementTableMenu.OUTPUT_SLOT, ItemStack.EMPTY);
+            return;
+        }
+
+        if (!husk.is(ModItems.FLOWER_HUSK)) {
+            setItem(RefinementTableMenu.OUTPUT_SLOT, ItemStack.EMPTY);
+            return;
+        }
+
+        MagicEssenceData elementData = elementEssence.get(ModDataComponents.MAGIC_ESSENCE_DATA);
+        MagicEssenceData shapeData = shapeEssence.get(ModDataComponents.MAGIC_ESSENCE_DATA);
+
+        if (elementData == null || shapeData == null
+                || elementData.element().isEmpty()
+                || shapeData.shape().isEmpty()) {
+            setItem(RefinementTableMenu.OUTPUT_SLOT, ItemStack.EMPTY);
+            return;
+        }
+
+        SpellElement element = elementData.element().get();
+        MagicShape shape = shapeData.shape().get();
+
+        setItem(
+                RefinementTableMenu.OUTPUT_SLOT,
+                SpellFlowerItem.create(element, shape)
+        );
+    }
     private final ContainerData dataAccess = new ContainerData() {
         @Override
         public int get(int index) {
@@ -139,12 +155,21 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
     @Override
     public void setItem(int slot, ItemStack stack) {
         items.set(slot, stack);
+
+        if (slot != RefinementTableMenu.OUTPUT_SLOT) {
+            updateResult();
+        }
+
         setChanged();
     }
-
     @Override
     public ItemStack removeItem(int slot, int amount) {
         ItemStack result = items.get(slot).split(amount);
+
+        if (slot != RefinementTableMenu.OUTPUT_SLOT) {
+            updateResult();
+        }
+
         setChanged();
         return result;
     }
@@ -153,6 +178,11 @@ public class RefinementTableBlockEntity extends BlockEntity implements Container
     public ItemStack removeItemNoUpdate(int slot) {
         ItemStack stack = items.get(slot);
         items.set(slot, ItemStack.EMPTY);
+
+        if (slot != RefinementTableMenu.OUTPUT_SLOT) {
+            updateResult();
+        }
+
         return stack;
     }
 

@@ -34,10 +34,6 @@ public class RefinementTableBlock extends BaseEntityBlock {
         return new RefinementTableBlockEntity(pos, state);
     }
 
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.REFINEMENT_TABLE, RefinementTableBlockEntity::tick);
-    }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
